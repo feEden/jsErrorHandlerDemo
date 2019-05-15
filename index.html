@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js 错误处理</title>
+</head>
+
+<body>
+    <!-- 报404错误 -->
+    <img src="./xxx.pmg" alt="">
+</body>
+<script>
+    // 全局捕获promise错误
+    window.addEventListener("unhandledrejection", (e) => {
+        console.log(e.reason);
+        //return true;
+        // 阻止错误向上抛出
+        e.preventDefault();
+    });
+    /*
+        全局捕获异常，包括html中请求资源的错误
+            1. 捕获全局的js运行时错误，触发一个ErrorEvent接口的error事件，并执行window.onerror()
+            2.当一项资源（如<img>或<script>）加载失败， 加载资源的元素会触发一个Event接口的error事件， 并执行该元素上的onerror
+             () 处理函数。 这些error事件不会向上冒泡到window， 不过（ 至少在Firefox中） 能被单一的window.addEventListener捕获
+     */
+    window.addEventListener('error', (e) => {
+        console.log(e);
+        return false;
+    }, true);
+    // 全局捕获 可以捕获异步
+    window.onerror = ("error", (msg, url, row, col, error) => {
+        console.log("window.onerror捕获：" + msg);
+        // 阻止错误继续向上抛出
+        return true;
+    })
+    try {
+        //console.log(error);
+        setTimeout(() => {
+            console.log(error);
+        }, 1000);
+    } catch (e) {
+        console.log("try...catch捕获" + e);
+    }
+    new Promise((resolve, reject) => {
+        reject("我出错误...");
+    });
+    Promise.resolve().then(() => {
+        throw "我又错了....";
+    })
+</script>
+
+</html>
